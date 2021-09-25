@@ -63,7 +63,7 @@ namespace {
 
   // Futility margin
   Value futility_margin(Depth d, bool improving, int statScore) {
-    return Value(214 * std::max(0, d - improving + statScore / 10000));
+    return Value(214 * std::max(0, d - improving + statScore / 15000));
   }
 
   // Reductions lookup table, initialized at startup
