@@ -62,8 +62,8 @@ namespace {
   enum NodeType { NonPV, PV, Root };
 
   // Futility margin
-  Value futility_margin(Depth d, bool improving) {
-    return Value(214 * (d - improving));
+  Value futility_margin(Depth d, bool improving, int statScore) {
+    return Value(214 * std::max(0, d - improving + statScore / 10000));
   }
 
   // Reductions lookup table, initialized at startup
@@ -820,7 +820,7 @@ namespace {
     // The depth condition is important for mate finding.
     if (   !PvNode
         &&  depth < 9
-        &&  eval - futility_margin(depth, improving) >= beta
+        &&  eval - futility_margin(depth, improving, (ss-1)->statScore) >= beta
         &&  eval < VALUE_KNOWN_WIN) // Do not return unproven wins
         return eval;
 
