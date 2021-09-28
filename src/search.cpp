@@ -955,6 +955,8 @@ moves_loop: // When in check, search starts here
 
     ttCapture = ttMove && pos.capture_or_promotion(ttMove);
     int rangeReduction = 0;
+    int avgHistory = 0;
+    int lmrMoveCount = 0;
 
     // Step 11. A small Probcut idea, when we are in check
     probCutBeta = beta + 409;
@@ -1228,7 +1230,9 @@ moves_loop: // When in check, search starts here
                          - 4923;
 
           // Decrease/increase reduction for moves with a good/bad history (~30 Elo)
-          r -= ss->statScore / 14721;
+          lmrMoveCount++;
+          avgHistory += ss->statScore;
+          r -= (3 * ss->statScore + avgHistory / lmrMoveCount) / 59000;
 
           // In general we want to cap the LMR depth search at newDepth. But if reductions
           // are really negative and movecount is low, we allow this move to be searched
