@@ -1222,7 +1222,7 @@ moves_loop: // When in check, search starts here
               r++;
 
           // Decrease/increase reduction if we losing/winning
-          r -= std::clamp(bestValue / 100, Value(-1), Value(1));
+          r += std::clamp(bestValue / 100, Value(-1), Value(1));
 
           ss->statScore =  thisThread->mainHistory[us][from_to(move)]
                          + (*contHist[0])[movedPiece][to_sq(move)]
