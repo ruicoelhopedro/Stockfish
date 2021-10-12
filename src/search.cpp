@@ -587,7 +587,7 @@ namespace {
     Move ttMove, move, excludedMove, bestMove;
     Depth extension, newDepth;
     Value bestValue, value, ttValue, eval, maxValue, probCutBeta;
-    bool givesCheck, improving, didLMR, priorCapture;
+    bool givesCheck, improving, didLMR, priorCapture, didNullMove;
     bool captureOrPromotion, doFullDepthSearch, moveCountPruning,
          ttCapture, singularQuietLMR, noLMRExtension;
     Piece movedPiece;
@@ -600,6 +600,7 @@ namespace {
     moveCount          = bestMoveCount = captureCount = quietCount = ss->moveCount = 0;
     bestValue          = -VALUE_INFINITE;
     maxValue           = VALUE_INFINITE;
+    didNullMove        = false;
 
     // Check for the available remaining time
     if (thisThread == Threads.main())
@@ -835,6 +836,7 @@ namespace {
         && (ss->ply >= thisThread->nmpMinPly || us != thisThread->nmpColor))
     {
         assert(eval - beta >= 0);
+        didNullMove = true;
 
         // Null move dynamic reduction based on depth and value
         Depth R = std::min(int(eval - beta) / 205, 3) + depth / 3 + 4;
@@ -1154,6 +1156,10 @@ moves_loop: // When in check, search starts here
                && move == ttMove
                && move == ss->killers[0]
                && (*contHist[0])[movedPiece][to_sq(move)] >= 10000)
+          extension = 1;
+
+      // Extend after a null move search failed low
+      else if (didNullMove)
           extension = 1;
 
       // Add extension to new depth
