@@ -595,6 +595,7 @@ namespace {
 
     // Step 1. Initialize node
     ss->inCheck        = pos.checkers();
+    ss->currentMoveCapture = pos.captured_piece();
     priorCapture       = pos.captured_piece();
     Color us           = pos.side_to_move();
     moveCount          = bestMoveCount = captureCount = quietCount = ss->moveCount = 0;
@@ -1220,6 +1221,12 @@ moves_loop: // When in check, search starts here
 
           // Increase reduction if ttMove is a capture (~3 Elo)
           if (ttCapture)
+              r++;
+
+          // Increase reduction if the last sequence of moves was quiet-capture
+          if (   ss->ply > 1
+              && (ss-1)->currentMoveCapture
+              && !(ss-2)->currentMoveCapture)
               r++;
 
           ss->statScore =  thisThread->mainHistory[us][from_to(move)]
