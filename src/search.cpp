@@ -950,6 +950,13 @@ namespace {
         && !ttMove)
         depth--;
 
+    // Decrease depth after a null move whose TT move is a capture
+    if (   (ss-1)->currentMove == MOVE_NULL
+        && depth >= 5
+        && ttMove
+        && pos.capture_or_promotion(ttMove))
+        depth--;
+
 moves_loop: // When in check, search starts here
 
     ttCapture = ttMove && pos.capture_or_promotion(ttMove);
