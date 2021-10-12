@@ -1227,7 +1227,8 @@ moves_loop: // When in check, search starts here
           if (   ss->ply > 1
               && (ss-1)->currentMoveCapture
               && !(ss-2)->currentMoveCapture
-              && !givesCheck)
+              && !givesCheck
+              && moveCount > 10)
               r++;
 
           ss->statScore =  thisThread->mainHistory[us][from_to(move)]
