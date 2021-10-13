@@ -676,6 +676,29 @@ bool Position::gives_check(Move m) const {
 }
 
 
+/// Position::threatening() tests whether a pseudo-legal move threatens a capture
+
+bool Position::threatening(Move m) const {
+
+  Color us = sideToMove;
+  Square from = from_sq(m);
+  Square to = to_sq(m);
+  Piece pc = piece_on(from);
+  Bitboard enemies = pieces(~us);
+  Bitboard new_pieces = pieces() ^ from ^ to;
+  PieceType pt = type_of(pc);
+
+  // Do we attack an enemy piece in the target square?
+  if (   (pt == PAWN   && (pawn_attacks_bb(us, to) & enemies))
+      || (pt == KNIGHT && (attacks_bb<KNIGHT>(to, new_pieces) & pieces(~us, ROOK, QUEEN)))
+      || (pt == BISHOP && (attacks_bb<BISHOP>(to, new_pieces) & pieces(~us, ROOK, QUEEN)))
+      || (pt == ROOK   && (attacks_bb<  ROOK>(to, new_pieces) & pieces(~us, QUEEN))))
+      return true;
+
+  return false;
+}
+
+
 /// Position::do_move() makes a move, and saves all information necessary
 /// to a StateInfo object. The move is assumed to be legal. Pseudo-legal
 /// moves should be filtered out before this function is called.
