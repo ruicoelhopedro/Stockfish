@@ -1211,7 +1211,8 @@ moves_loop: // When in check, search starts here
               && (ss-1)->currentMoveCapture
               && !(ss-2)->currentMoveCapture
               && !givesCheck
-              && !captureOrPromotion)
+              && !captureOrPromotion
+              && !PvNode)
               r++;
 
           ss->statScore =  thisThread->mainHistory[us][from_to(move)]
