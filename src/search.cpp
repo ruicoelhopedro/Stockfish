@@ -1206,12 +1206,12 @@ moves_loop: // When in check, search starts here
           if (ttCapture)
               r++;
 
-          // Increase reduction in non-Pv nodes if the last sequence of moves was quiet-capture
+          // Increase reduction for non-captures if the last sequence of moves was quiet-capture
           if (   ss->ply > 1
               && (ss-1)->currentMoveCapture
               && !(ss-2)->currentMoveCapture
               && !givesCheck
-              && !PvNode)
+              && !captureOrPromotion)
               r++;
 
           ss->statScore =  thisThread->mainHistory[us][from_to(move)]
