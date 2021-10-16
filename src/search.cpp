@@ -1253,8 +1253,8 @@ moves_loop: // When in check, search starts here
           // If the move passed LMR update its stats
           if (didLMR && !captureOrPromotion)
           {
-              int bonus = value > alpha ?  stat_bonus(newDepth + (value - alpha) / 200)
-                                        : -stat_bonus(newDepth - (value - alpha) / 200);
+              int bonus = value > alpha ?  stat_bonus(newDepth + (value - alpha) / 300)
+                                        : -stat_bonus(newDepth - (value - alpha) / 300);
 
               update_continuation_histories(ss, movedPiece, to_sq(move), bonus);
           }
