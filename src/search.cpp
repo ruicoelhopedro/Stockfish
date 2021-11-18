@@ -581,9 +581,9 @@ namespace {
     TTEntry* tte;
     Key posKey;
     Move ttMove, move, excludedMove, bestMove;
-    Depth extension, newDepth;
+    Depth extension, newDepth, treeExtension;
     Value bestValue, value, ttValue, eval, maxValue, probCutBeta;
-    bool givesCheck, improving, didLMR, priorCapture;
+    bool givesCheck, improving, didLMR, priorCapture, priorExtension;
     bool captureOrPromotion, doFullDepthSearch, moveCountPruning,
          ttCapture, singularQuietLMR;
     Piece movedPiece;
@@ -596,6 +596,8 @@ namespace {
     moveCount          = bestMoveCount = captureCount = quietCount = ss->moveCount = 0;
     bestValue          = -VALUE_INFINITE;
     maxValue           = VALUE_INFINITE;
+    treeExtension      = 0;
+    priorExtension     = (ss-1)->depth <= depth;
 
     // Check for the available remaining time
     if (thisThread == Threads.main())
@@ -798,6 +800,12 @@ namespace {
     {
         int bonus = std::clamp(-depth * 4 * int((ss-1)->staticEval + ss->staticEval), -1000, 1000);
         thisThread->mainHistory[~us][from_to((ss-1)->currentMove)] << bonus;
+
+        // Extend un-extended trees with large eval swings
+        if (   PvNode
+            && !priorExtension
+            && abs(int((ss-1)->staticEval + ss->staticEval)) > 200)
+            treeExtension += 1;
     }
 
     // Set up the improvement variable, which is the difference between the current
@@ -945,6 +953,9 @@ namespace {
 moves_loop: // When in check, search starts here
 
     int rangeReduction = 0;
+
+    // Tree extensions
+    depth += treeExtension;
 
     // Step 11. A small Probcut idea, when we are in check
     probCutBeta = beta + 409;
