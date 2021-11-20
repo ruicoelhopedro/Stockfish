@@ -802,7 +802,7 @@ namespace {
         thisThread->mainHistory[~us][from_to((ss-1)->currentMove)] << bonus;
 
         // Extend un-extended trees with large eval swings
-        if (   PvNode
+        if (   (PvNode || cutNode)
             && !priorExtension
             && abs(int((ss-1)->staticEval + ss->staticEval)) > 600)
             treeExtension += 1;
