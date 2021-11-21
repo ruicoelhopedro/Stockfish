@@ -583,7 +583,7 @@ namespace {
     Move ttMove, move, excludedMove, bestMove;
     Depth extension, newDepth, treeExtension;
     Value bestValue, value, ttValue, eval, maxValue, probCutBeta;
-    bool givesCheck, improving, didLMR, priorCapture, priorExtension;
+    bool givesCheck, improving, didLMR, priorCapture;
     bool captureOrPromotion, doFullDepthSearch, moveCountPruning,
          ttCapture, singularQuietLMR;
     Piece movedPiece;
@@ -597,7 +597,6 @@ namespace {
     bestValue          = -VALUE_INFINITE;
     maxValue           = VALUE_INFINITE;
     treeExtension      = 0;
-    priorExtension     = (ss-1)->depth <= depth;
 
     // Check for the available remaining time
     if (thisThread == Threads.main())
@@ -802,8 +801,8 @@ namespace {
         thisThread->mainHistory[~us][from_to((ss-1)->currentMove)] << bonus;
 
         // Extend un-extended trees with large eval swings
-        if (   (PvNode || cutNode)
-            && !priorExtension
+        if (   PvNode
+            && !(ss-1)->extended
             && abs(int((ss-1)->staticEval + ss->staticEval)) > 500)
             treeExtension += 1;
     }
@@ -1148,6 +1147,7 @@ moves_loop: // When in check, search starts here
 
       // Add extension to new depth
       newDepth += extension;
+      ss->extended = extension > 0;
       ss->doubleExtensions = (ss-1)->doubleExtensions + (extension == 2);
 
       // Speculative prefetch as early as possible
