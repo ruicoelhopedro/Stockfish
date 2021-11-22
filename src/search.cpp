@@ -1125,7 +1125,7 @@ moves_loop: // When in check, search starts here
       else if (   (PvNode || cutNode)
                && captureOrPromotion
                && moveCount != 1)
-          extension = 1;
+          extension = 1 + (type_of(move) == PROMOTION);
 
       // Check extensions
       else if (   givesCheck
