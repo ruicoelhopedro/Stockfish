@@ -808,7 +808,7 @@ namespace {
         // Extend un-extended trees with large eval swings
         if (   PvNode
             && !(ss-1)->extended
-            && abs(int((ss-1)->staticEval + ss->staticEval)) > 500)
+            && abs(int((ss-1)->staticEval + ss->staticEval)) > 600)
             treeExtension += 1;
     }
 
