@@ -1076,6 +1076,18 @@ make_v:
 } // namespace Eval
 
 
+
+/// Eval::usingClassical() returns whether we should use classical or NNUE evaluation
+
+bool Eval::usingClassical(const Position& pos) {
+
+  /// Deciding between classical and NNUE eval: for high PSQ imbalance we use classical,
+  /// but we switch to NNUE during long shuffling or with high material on the board.
+  return !useNNUE
+      || abs(eg_value(pos.psq_score())) * 5 > (850 + pos.non_pawn_material() / 64) * (5 + pos.rule50_count());
+
+}
+
 /// evaluate() is the evaluator for the outer world. It returns a static
 /// evaluation of the position from the point of view of the side to move.
 
@@ -1083,11 +1095,7 @@ Value Eval::evaluate(const Position& pos) {
 
   Value v;
 
-  // Deciding between classical and NNUE eval: for high PSQ imbalance we use classical,
-  // but we switch to NNUE during long shuffling or with high material on the board.
-
-  if (  !useNNUE
-      || abs(eg_value(pos.psq_score())) * 5 > (850 + pos.non_pawn_material() / 64) * (5 + pos.rule50_count()))
+  if (usingClassical(pos))
       v = Evaluation<NO_TRACE>(pos).value();          // classical
   else
   {

@@ -588,7 +588,7 @@ namespace {
     Move ttMove, move, excludedMove, bestMove;
     Depth extension, newDepth;
     Value bestValue, value, ttValue, eval, maxValue, probCutBeta;
-    bool givesCheck, improving, didLMR, priorCapture;
+    bool givesCheck, improving, didLMR, priorCapture, classicalEval;
     bool captureOrPromotion, doFullDepthSearch, moveCountPruning,
          ttCapture, singularQuietLMR;
     Piece movedPiece;
@@ -765,6 +765,7 @@ namespace {
     CapturePieceToHistory& captureHistory = thisThread->captureHistory;
 
     // Step 6. Static evaluation of the position
+    classicalEval = false;
     if (ss->inCheck)
     {
         // Skip early pruning when in check
@@ -788,10 +789,13 @@ namespace {
         if (    ttValue != VALUE_NONE
             && (tte->bound() & (ttValue > eval ? BOUND_LOWER : BOUND_UPPER)))
             eval = ttValue;
+        else
+            classicalEval = Eval::usingClassical(pos);
     }
     else
     {
         ss->staticEval = eval = evaluate(pos);
+        classicalEval = Eval::usingClassical(pos);
 
         // Save static evaluation into transposition table
         if (!excludedMove)

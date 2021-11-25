@@ -32,6 +32,7 @@ namespace Eval {
 
   std::string trace(Position& pos);
   Value evaluate(const Position& pos);
+  bool usingClassical(const Position& pos);
 
   extern bool useNNUE;
   extern std::string currentEvalFileName;
