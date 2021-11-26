@@ -765,11 +765,11 @@ namespace {
     CapturePieceToHistory& captureHistory = thisThread->captureHistory;
 
     // Step 6. Static evaluation of the position
-    classicalEval = false;
     if (ss->inCheck)
     {
         // Skip early pruning when in check
         ss->staticEval = eval = VALUE_NONE;
+        classicalEval = false;
         improving = false;
         improvement = 0;
         goto moves_loop;
@@ -778,6 +778,7 @@ namespace {
     {
         // Never assume anything about values stored in TT
         ss->staticEval = eval = tte->eval();
+        classicalEval = Eval::usingClassical(pos);
         if (eval == VALUE_NONE)
             ss->staticEval = eval = evaluate(pos);
 
@@ -788,9 +789,10 @@ namespace {
         // Can ttValue be used as a better position evaluation?
         if (    ttValue != VALUE_NONE
             && (tte->bound() & (ttValue > eval ? BOUND_LOWER : BOUND_UPPER)))
+        {
             eval = ttValue;
-        else
-            classicalEval = Eval::usingClassical(pos);
+            classicalEval = false;
+        }
     }
     else
     {
