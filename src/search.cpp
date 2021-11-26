@@ -765,11 +765,11 @@ namespace {
     CapturePieceToHistory& captureHistory = thisThread->captureHistory;
 
     // Step 6. Static evaluation of the position
-    classicalEval = false;
     if (ss->inCheck)
     {
         // Skip early pruning when in check
         ss->staticEval = eval = VALUE_NONE;
+        classicalEval = false;
         improving = false;
         improvement = 0;
         goto moves_loop;
@@ -778,6 +778,7 @@ namespace {
     {
         // Never assume anything about values stored in TT
         ss->staticEval = eval = tte->eval();
+        classicalEval = Eval::usingClassical(pos);
         if (eval == VALUE_NONE)
             ss->staticEval = eval = evaluate(pos);
 
@@ -788,9 +789,10 @@ namespace {
         // Can ttValue be used as a better position evaluation?
         if (    ttValue != VALUE_NONE
             && (tte->bound() & (ttValue > eval ? BOUND_LOWER : BOUND_UPPER)))
+        {
             eval = ttValue;
-        else
-            classicalEval = Eval::usingClassical(pos);
+            classicalEval = false;
+        }
     }
     else
     {
@@ -1058,17 +1060,19 @@ moves_loop: // When in check, search starts here
           }
           else
           {
+              int history =   (*contHist[0])[movedPiece][to_sq(move)]
+                            + (*contHist[1])[movedPiece][to_sq(move)]
+                            + (*contHist[3])[movedPiece][to_sq(move)];
+
               // Continuation history based pruning (~20 Elo)
-              if (lmrDepth < 5
-                  && (*contHist[0])[movedPiece][to_sq(move)]
-                  + (*contHist[1])[movedPiece][to_sq(move)]
-                  + (*contHist[3])[movedPiece][to_sq(move)] < -3000 * depth + 3000)
+              if (   lmrDepth < 5
+                  && history < -3000 * depth + 3000)
                   continue;
 
               // Futility pruning: parent node (~5 Elo)
               if (   !ss->inCheck
                   && lmrDepth < 8
-                  && ss->staticEval + 172 + 145 * lmrDepth <= alpha)
+                  && ss->staticEval + 172 + 145 * lmrDepth + history / 256 <= alpha)
                   continue;
 
               // Prune moves with negative SEE (~20 Elo)
