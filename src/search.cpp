@@ -294,6 +294,7 @@ void Thread::search() {
   double timeReduction = 1, totBestMoveChanges = 0;
   Color us = rootPos.side_to_move();
   int iterIdx = 0;
+  bool singularCheck = false;
 
   std::memset(ss-7, 0, 10 * sizeof(Stack));
   for (int i = 7; i > 0; i--)
@@ -502,13 +503,33 @@ void Thread::search() {
                                               * totBestMoveChanges / Threads.size();
           double totalTime = Time.optimum() * fallingEval * reduction * bestMoveInstability;
 
+          // After some time and if the best move has not been changing often, do a quick search
+          // with the best move excluded. If the score is below alpha, the best move is probably
+          // singular and we can stop the search earlier
+          bool timeout = false;
+          if (   !singularCheck
+              && Time.elapsed() > 0.33 * totalTime
+              && totBestMoveChanges < 0.01
+              && rootDepth >= 10)
+          {
+              singularCheck = true;
+
+              Depth singularDepth = (rootDepth - 1) / 2;
+              Value singularAlpha = alpha - 3 * rootDepth;
+              ss->excludedMove = lastBestMove;
+              Value singularScore = Stockfish::search<NonPV>(rootPos, ss, singularAlpha - 1, singularAlpha, singularDepth, false);
+              ss->excludedMove = MOVE_NONE;
+
+              timeout = singularScore < singularAlpha;
+          }
+
           // Cap used time in case of a single legal move for a better viewer experience in tournaments
           // yielding correct scores and sufficiently fast moves.
           if (rootMoves.size() == 1)
               totalTime = std::min(500.0, totalTime);
 
           // Stop the search if we have exceeded the totalTime
-          if (Time.elapsed() > totalTime)
+          if (Time.elapsed() > totalTime || timeout)
           {
               // If we are allowed to ponder do not stop the search now but
               // keep pondering until the GUI sends "ponderhit" or "stop".
