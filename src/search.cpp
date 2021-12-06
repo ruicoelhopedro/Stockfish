@@ -514,7 +514,7 @@ void Thread::search() {
           {
               singularCheck = true;
 
-              Depth singularDepth = (rootDepth - 1) / 2;
+              Depth singularDepth = 3 * rootDepth / 4;
               Value singularAlpha = alpha - 10 * rootDepth;
               ss->excludedMove = lastBestMove;
               Value singularScore = Stockfish::search<NonPV>(rootPos, ss, singularAlpha - 1, singularAlpha, singularDepth, false);
