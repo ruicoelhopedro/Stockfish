@@ -1727,7 +1727,7 @@ moves_loop: // When in check, search starts here
         // Decrease stats for all non-best quiet moves
         for (int i = 0; i < quietCount; ++i)
         {
-            int bonus3 = bonus2 + (bestValue - quietsValue[i]) / 50;
+            int bonus3 = bonus2 + (bestValue - quietsValue[i]) / 75;
             thisThread->mainHistory[us][from_to(quietsSearched[i])] << -bonus3;
             update_continuation_histories(ss, pos.moved_piece(quietsSearched[i]), to_sq(quietsSearched[i]), -bonus3);
         }
