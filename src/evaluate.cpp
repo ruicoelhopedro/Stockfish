@@ -1089,7 +1089,7 @@ Value Eval::evaluate(const Position& pos) {
   bool useClassical = false;
 
   int threshold = 300;
-  int margin = 100;
+  int margin = 50;
 
   if (  !useNNUE
       || abs(eg_value(pos.psq_score())) * 5 > (850 + pos.non_pawn_material() / 64) * (5 + pos.rule50_count()))
