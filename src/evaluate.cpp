@@ -1088,7 +1088,7 @@ Value Eval::evaluate(const Position& pos) {
 
   bool useClassical = false;
 
-  int threshold = 300;
+  int threshold = 325;
   int margin = 50;
 
   if (  !useNNUE
