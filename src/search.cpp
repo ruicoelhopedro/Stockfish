@@ -330,6 +330,9 @@ void Thread::search() {
   doubleExtensionAverage[WHITE].set(0, 100);  // initialize the running average at 0%
   doubleExtensionAverage[BLACK].set(0, 100);  // initialize the running average at 0%
 
+  researchAverage[WHITE].set(0, 100);  // initialize the running average at 0%
+  researchAverage[BLACK].set(0, 100);  // initialize the running average at 0%
+
   nodesLastExplosive = nodes;
   nodesLastNormal    = nodes;
   state              = EXPLOSION_NONE;
@@ -1193,6 +1196,11 @@ moves_loop: // When in check, search starts here
           // Decrease/increase reduction for moves with a good/bad history (~30 Elo)
           r -= ss->statScore / 14721;
 
+          // Decrease reduction for low move counts when researches are frequent
+          if (   moveCount < 5
+              && thisThread->researchAverage[us].is_greater(5, 100))
+              r--;
+
           // In general we want to cap the LMR depth search at newDepth. But if reductions
           // are really negative and movecount is low, we allow this move to be searched
           // deeper than the first move (this may lead to hidden double extensions).
@@ -1225,6 +1233,9 @@ moves_loop: // When in check, search starts here
       if (doFullDepthSearch)
       {
           value = -search<NonPV>(pos, ss+1, -(alpha+1), -alpha, newDepth + doDeeperSearch, !cutNode);
+
+          // Update research running average
+          thisThread->researchAverage[us].update(didLMR);
 
           // If the move passed LMR update its stats
           if (didLMR && !captureOrPromotion)
