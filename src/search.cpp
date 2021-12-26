@@ -1197,8 +1197,8 @@ moves_loop: // When in check, search starts here
           r -= ss->statScore / 14721;
 
           // Decrease reduction for low move counts when researches are frequent
-          if (   moveCount < 4
-              && thisThread->researchAverage[us].is_greater(6, 100))
+          if (   moveCount < 6
+              && thisThread->researchAverage[us].is_greater(4, 100))
               r--;
 
           // In general we want to cap the LMR depth search at newDepth. But if reductions
