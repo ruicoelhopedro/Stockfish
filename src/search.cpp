@@ -1069,7 +1069,7 @@ moves_loop: // When in check, search starts here
                   && type_of(movedPiece) == KING
                   && pos.non_pawn_material(us) > Value(1000)
                   && lmrDepth < 4
-                  && ss->ply > 10)
+                  && ss->ply > 5)
                   continue;
 
               // Prune moves with negative SEE (~3 Elo)
