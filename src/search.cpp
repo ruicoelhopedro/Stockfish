@@ -1064,6 +1064,14 @@ moves_loop: // When in check, search starts here
                   && ss->staticEval + 142 + 139 * lmrDepth + history / 64 <= alpha)
                   continue;
 
+              // Prune king moves when there's a lot of material on board
+              if (   !ss->inCheck
+                  && type_of(movedPiece) == KING
+                  && pos.non_pawn_material(us) > Value(1000)
+                  && lmrDepth < 4
+                  && ss->ply > 10)
+                  continue;
+
               // Prune moves with negative SEE (~3 Elo)
               if (!pos.see_ge(move, Value(-21 * lmrDepth * lmrDepth - 21 * lmrDepth)))
                   continue;
