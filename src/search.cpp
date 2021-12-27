@@ -1211,7 +1211,8 @@ moves_loop: // When in check, search starts here
               rangeReduction++;
 
           // If the son is reduced and fails high it will be re-searched at full depth
-          doFullDepthSearch = value > alpha && d < newDepth;
+          int threshold = std::max(0, 1 * (r - 4));
+          doFullDepthSearch = value > alpha + threshold && d < newDepth;
           doDeeperSearch = value > alpha + 88;
           didLMR = true;
       }
