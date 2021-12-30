@@ -1130,6 +1130,17 @@ moves_loop: // When in check, search starts here
                && (*contHist[0])[movedPiece][to_sq(move)] >= 10000)
           extension = 1;
 
+      // Speculative extension when we find a partial search for this position with current move excluded
+      else if (   move == ttMove
+               && depth > 6)
+      {
+          bool ttHitSpec;
+          TT.probe(pos.key() ^ make_key(move), ttHitSpec);
+
+          if (ttHitSpec)
+              extension = 1;
+      }
+
       // Add extension to new depth
       newDepth += extension;
       ss->doubleExtensions = (ss-1)->doubleExtensions + (extension == 2);
