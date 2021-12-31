@@ -777,6 +777,11 @@ namespace {
         if (    ttValue != VALUE_NONE
             && (tte->bound() & (ttValue > eval ? BOUND_LOWER : BOUND_UPPER)))
             eval = ttValue;
+        
+        // Use qsearch to improve static eval
+        else if (   !PvNode
+                 && depth > 4)
+            eval = qsearch<NonPV>(pos, ss, eval - 1, eval, 0);
     }
     else
     {
