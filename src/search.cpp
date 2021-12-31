@@ -780,7 +780,7 @@ namespace {
 
         // Use qsearch to improve static eval
         else if (   !PvNode
-                 && depth > 6)
+                 && depth > 2)
             eval = qsearch<NonPV>(pos, ss, eval - 1, eval, 0);
     }
     else
