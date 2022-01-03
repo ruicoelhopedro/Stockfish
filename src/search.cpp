@@ -1458,11 +1458,10 @@ moves_loop: // When in check, search starts here
         // Recompute static eval at PV nodes
         if (PvNode)
             ss->staticEval = bestValue = evaluate(pos);
-
-        if (ss->ttHit)
+        else if (ss->ttHit)
         {
             // Never assume anything about values stored in TT
-            if (!PvNode && (ss->staticEval = bestValue = tte->eval()) == VALUE_NONE)
+            if ((ss->staticEval = bestValue = tte->eval()) == VALUE_NONE)
                 ss->staticEval = bestValue = evaluate(pos);
 
             // ttValue can be used as a better position evaluation (~7 Elo)
@@ -1470,7 +1469,7 @@ moves_loop: // When in check, search starts here
                 && (tte->bound() & (ttValue > bestValue ? BOUND_LOWER : BOUND_UPPER)))
                 bestValue = ttValue;
         }
-        else if (!PvNode)
+        else
             // In case of null move search use previous static eval with a different sign
             ss->staticEval = bestValue =
             (ss-1)->currentMove != MOVE_NULL ? evaluate(pos)
