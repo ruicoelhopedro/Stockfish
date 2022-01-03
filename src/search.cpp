@@ -1465,6 +1465,11 @@ moves_loop: // When in check, search starts here
             if (    ttValue != VALUE_NONE
                 && (tte->bound() & (ttValue > bestValue ? BOUND_LOWER : BOUND_UPPER)))
                 bestValue = ttValue;
+
+            // Recompute eval at PV nodes
+            else if (   PvNode
+                     && tte->eval() != VALUE_NONE)
+                ss->staticEval = bestValue = evaluate(pos);
         }
         else
             // In case of null move search use previous static eval with a different sign
