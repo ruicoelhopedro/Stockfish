@@ -1467,7 +1467,8 @@ moves_loop: // When in check, search starts here
 
             // ttValue can be used as a better position evaluation (~7 Elo)
             if (    ttValue != VALUE_NONE
-                && (tte->bound() & (ttValue > bestValue ? BOUND_LOWER : BOUND_UPPER)))
+                && (tte->bound() & (ttValue > bestValue ? BOUND_LOWER : BOUND_UPPER))
+                && (!PvNode || tte->depth() > depth))
                 bestValue = ttValue;
         }
         else if (!PvNode)
