@@ -586,7 +586,7 @@ namespace {
     Move ttMove, move, excludedMove, bestMove;
     Depth extension, newDepth;
     Value bestValue, value, ttValue, eval, maxValue, probCutBeta;
-    bool givesCheck, improving, didLMR, priorCapture;
+    bool givesCheck, improving, didLMR, priorCapture, threatExtension;
     bool captureOrPromotion, doFullDepthSearch, moveCountPruning, ttCapture;
     Piece movedPiece;
     int moveCount, captureCount, quietCount, bestMoveCount, improvement;
@@ -638,6 +638,7 @@ namespace {
     ss->doubleExtensions = (ss-1)->doubleExtensions;
     ss->depth            = depth;
     Square prevSq        = to_sq((ss-1)->currentMove);
+    threatExtension      = false;
 
     // Update the running average statistics for double extensions
     thisThread->doubleExtensionAverage[us].update(ss->depth > (ss-1)->depth);
@@ -860,6 +861,8 @@ namespace {
             if (v >= beta)
                 return nullValue;
         }
+        else
+            threatExtension = (nullValue < alpha - 500);
     }
 
     probCutBeta = beta + 209 - 44 * improving;
@@ -1129,7 +1132,7 @@ moves_loop: // When in check, search starts here
           extension = 1;
 
       // Add extension to new depth
-      newDepth += extension;
+      newDepth += extension + threatExtension;
       ss->doubleExtensions = (ss-1)->doubleExtensions + (extension == 2);
 
       // Speculative prefetch as early as possible
