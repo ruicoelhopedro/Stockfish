@@ -862,7 +862,7 @@ namespace {
                 return nullValue;
         }
         else
-            threatExtension = (nullValue < alpha - 500);
+            threatExtension = (nullValue < alpha - 1000);
     }
 
     probCutBeta = beta + 209 - 44 * improving;
