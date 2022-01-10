@@ -1040,7 +1040,8 @@ moves_loop: // When in check, search starts here
                   continue;
 
               // SEE based pruning (~9 Elo)
-              if (!pos.see_ge(move, Value(-218) * depth))
+              if (   !PvNode
+                  && !pos.see_ge(move, Value(-218) * depth))
                   continue;
           }
           else
