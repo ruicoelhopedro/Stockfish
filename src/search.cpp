@@ -589,7 +589,7 @@ namespace {
     bool givesCheck, improving, didLMR, priorCapture;
     bool captureOrPromotion, doFullDepthSearch, moveCountPruning, ttCapture;
     Piece movedPiece;
-    int moveCount, captureCount, quietCount, bestMoveCount, improvement;
+    int moveCount, captureCount, quietCount, bestMoveCount, improvement, complexity;
 
     // Step 1. Initialize node
     ss->inCheck        = pos.checkers();
@@ -803,6 +803,7 @@ namespace {
                   :                                    200;
 
     improving = improvement > 0;
+    complexity = abs(ss->staticEval - eg_value(pos.psq_score()));
 
     // Step 7. Futility pruning: child node (~25 Elo).
     // The depth condition is important for mate finding.
