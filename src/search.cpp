@@ -769,7 +769,7 @@ namespace {
                   :                                    200;
 
     improving = improvement > 0;
-    complexity = abs(ss->staticEval - (us == WHITE ? eg_value(pos.psq_score()) : -eg_value(pos.psq_score())));
+    complexity = Eval::complexity(pos, ss->staticEval);
 
     thisThread->complexityAverage.update(complexity);
 

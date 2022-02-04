@@ -32,6 +32,7 @@ namespace Eval {
 
   std::string trace(Position& pos);
   Value evaluate(const Position& pos);
+  int complexity(const Position& pos, Value eval);
 
   extern bool useNNUE;
   extern std::string currentEvalFileName;

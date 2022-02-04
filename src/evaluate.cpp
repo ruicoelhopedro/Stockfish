@@ -1100,8 +1100,7 @@ Value Eval::evaluate(const Position& pos) {
        int scale      = 1136 + 20 * pos.non_pawn_material() / 1024;
        Color stm      = pos.side_to_move();
        Value optimism = pos.this_thread()->optimism[stm];
-       Value psq      = (stm == WHITE ? 1 : -1) * eg_value(pos.psq_score());
-       int complexity = 35 * abs(nnue - psq) / 256;
+       int complexity = 35 * Eval::complexity(pos, nnue) / 256;
 
        optimism = optimism * (44 + complexity) / 32;
        v = (nnue + optimism) * scale / 1024 - optimism;
@@ -1118,6 +1117,18 @@ Value Eval::evaluate(const Position& pos) {
 
   return v;
 }
+
+
+int Eval::complexity(const Position& pos, Value eval)
+{
+    Value psq = (pos.side_to_move() == WHITE ? 1 : -1) * eg_value(pos.psq_score());
+
+    int complexity = abs(eval - psq)
+                   + 2 * pos.count<PAWN>();
+
+    return complexity;
+}
+
 
 /// trace() is like evaluate(), but instead of returning a value, it returns
 /// a string (suitable for outputting to stdout) that contains the detailed
