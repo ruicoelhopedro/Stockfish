@@ -1156,7 +1156,7 @@ moves_loop: // When in check, search starts here
               r++;
 
           if (   type_of(move) == PROMOTION
-              && complexity > 700)
+              && complexity > 250)
               r--;
 
           ss->statScore =  thisThread->mainHistory[us][from_to(move)]
