@@ -1124,7 +1124,8 @@ int Eval::complexity(const Position& pos, Value eval)
     Value psq = (pos.side_to_move() == WHITE ? 1 : -1) * eg_value(pos.psq_score());
 
     int complexity = abs(eval - psq)
-                   + 30 * pos.count<QUEEN>();
+                   + 20 * pos.count<QUEEN>()
+                   - 20;
 
     return complexity;
 }
