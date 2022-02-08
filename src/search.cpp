@@ -1167,7 +1167,7 @@ moves_loop: // When in check, search starts here
           if (ttCapture)
               r++;
 
-          if (complexity > 2 * thisThread->complexityAverage.value())
+          if (complexity > 3 * thisThread->complexityAverage.value())
               r--;
 
           ss->statScore =  thisThread->mainHistory[us][from_to(move)]
