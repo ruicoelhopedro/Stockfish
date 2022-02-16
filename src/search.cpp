@@ -1098,13 +1098,6 @@ moves_loop: // When in check, search starts here
                   extension = -2;
           }
 
-          // Check extensions (~1 Elo)
-          else if (   givesCheck
-                   && depth > 8
-                   && move == ttMove
-                   && abs(ss->staticEval) > 81)
-              extension = 1;
-
           // Quiet ttMove extensions (~0 Elo)
           else if (   PvNode
                    && move == ttMove
