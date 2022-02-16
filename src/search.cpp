@@ -1101,6 +1101,7 @@ moves_loop: // When in check, search starts here
           // Check extensions (~1 Elo)
           else if (   givesCheck
                    && depth > 8
+                   && move == ttMove
                    && abs(ss->staticEval) > 81)
               extension = 1;
 
@@ -1165,6 +1166,11 @@ moves_loop: // When in check, search starts here
           // Increase reduction if ttMove is a capture (~3 Elo)
           if (ttCapture)
               r++;
+
+          if (   givesCheck
+              && depth > 8
+              && abs(ss->staticEval) > 81)
+              r--;
 
           ss->statScore =  thisThread->mainHistory[us][from_to(move)]
                          + (*contHist[0])[movedPiece][to_sq(move)]
