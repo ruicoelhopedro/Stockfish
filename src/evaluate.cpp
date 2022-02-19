@@ -1102,7 +1102,7 @@ Value Eval::evaluate(const Position& pos) {
        Value optimism = pos.this_thread()->optimism[stm];
        Value psq      = (stm == WHITE ? 1 : -1) * eg_value(pos.psq_score());
        int complexity = 35 * abs(nnue - psq) / 256;
-       int sentiment  = nnue * (50 - complexity) / 10000;
+       int sentiment  = (nnue + 100) * (80 - complexity) / 10000;
 
        optimism = optimism * (44 + complexity + sentiment) / 32;
        v = (nnue + optimism) * scale / 1024 - optimism;
