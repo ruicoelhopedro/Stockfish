@@ -106,6 +106,23 @@ struct LimitsType {
 
 extern LimitsType Limits;
 
+class Tapered {
+
+  uint8_t phase;
+
+public:
+  inline Tapered(uint64_t nodes) {
+    // Integer approximation of the logarithmic expression in
+    // https://www.desmos.com/calculator/yfmc3rpnou
+    phase = std::min(255, (msb((nodes >> 8) + (1 << 8)) - 8) * 35);
+  }
+
+  template<typename T>
+  T operator() (T st, T lt) const {
+    return (phase * lt + (255 - phase) * st) / 255;
+  }
+};
+
 void init();
 void clear();
 
