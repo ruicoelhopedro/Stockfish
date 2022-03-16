@@ -605,6 +605,7 @@ namespace {
     (ss+2)->killers[0]   = (ss+2)->killers[1] = MOVE_NONE;
     ss->doubleExtensions = (ss-1)->doubleExtensions;
     ss->depth            = depth;
+    ss->captureSequence  = priorCapture ? (ss-1)->captureSequence + 1 : 0;
     Square prevSq        = to_sq((ss-1)->currentMove);
 
     // Initialize statScore to zero for the grandchildren of the current position.
@@ -1153,6 +1154,12 @@ moves_loop: // When in check, search starts here
           if (   ss->ttPv
               && !likelyFailLow)
               r -= 2;
+
+          // Decrease reductions for quiets after long capture sequences
+          if (   PvNode
+              && !captureOrPromotion
+              && ss->captureSequence >= 4)
+              r--;
 
           // Decrease reduction if opponent's move count is high (~1 Elo)
           if ((ss-1)->moveCount > 7)
