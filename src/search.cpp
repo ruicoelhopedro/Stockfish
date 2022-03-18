@@ -1156,9 +1156,9 @@ moves_loop: // When in check, search starts here
               r -= 2;
 
           // Decrease reductions for quiets after long capture sequences
-          if (   PvNode
+          if (   ss->ttPv
               && !captureOrPromotion
-              && ss->captureSequence >= 6)
+              && ss->captureSequence >= 4)
               r--;
 
           // Decrease reduction if opponent's move count is high (~1 Elo)
