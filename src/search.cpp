@@ -1156,7 +1156,8 @@ moves_loop: // When in check, search starts here
               r -= 2;
 
           // Decrease reductions for quiets after long capture sequences
-          if (   ss->ttPv
+          if (   PvNode
+              && !ttCapture
               && !captureOrPromotion
               && ss->captureSequence >= 4)
               r--;
