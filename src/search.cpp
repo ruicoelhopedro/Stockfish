@@ -554,7 +554,7 @@ namespace {
     Depth extension, newDepth;
     Value bestValue, value, ttValue, eval, maxValue, probCutBeta;
     bool givesCheck, improving, didLMR, priorCapture;
-    bool captureOrPromotion, doFullDepthSearch, moveCountPruning, ttCapture;
+    bool captureOrPromotion, doFullDepthSearch, moveCountPruning, ttCapture, capture;
     Piece movedPiece;
     int moveCount, captureCount, quietCount, bestMoveCount, improvement, complexity;
 
@@ -991,6 +991,7 @@ moves_loop: // When in check, search starts here
       captureOrPromotion = pos.capture_or_promotion(move);
       movedPiece = pos.moved_piece(move);
       givesCheck = pos.gives_check(move);
+      capture = !pos.empty(to_sq(move));
 
       // Calculate new depth for this move
       newDepth = depth - 1;
@@ -1157,8 +1158,7 @@ moves_loop: // When in check, search starts here
 
           // Decrease reductions for quiets after long capture sequences
           if (   PvNode
-              && !ttCapture
-              && !captureOrPromotion
+              && !capture
               && ss->captureSequence >= 4)
               r--;
 
