@@ -1114,7 +1114,7 @@ moves_loop: // When in check, search starts here
           else if (   PvNode
                    && move == ttMove
                    && type_of(movedPiece) == KING
-                   && pos.non_pawn_material(us) > 6000)
+                   && pos.non_pawn_material(us) > 5000)
               extension = 1;
       }
 
