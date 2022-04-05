@@ -550,7 +550,7 @@ namespace {
 
     TTEntry* tte;
     Key posKey;
-    Move ttMove, move, excludedMove, bestMove;
+    Move ttMove, move, excludedMove, bestMove, candidateMove;
     Depth extension, newDepth;
     Value bestValue, value, ttValue, eval, maxValue, probCutBeta;
     bool givesCheck, improving, didLMR, priorCapture;
@@ -566,6 +566,7 @@ namespace {
     moveCount          = bestMoveCount = captureCount = quietCount = ss->moveCount = 0;
     bestValue          = -VALUE_INFINITE;
     maxValue           = VALUE_INFINITE;
+    candidateMove      = MOVE_NONE;
 
     // Check for the available remaining time
     if (thisThread == Threads.main())
@@ -605,6 +606,7 @@ namespace {
     (ss+2)->killers[0]   = (ss+2)->killers[1] = MOVE_NONE;
     ss->doubleExtensions = (ss-1)->doubleExtensions;
     ss->depth            = depth;
+    ss->currentMove      = MOVE_NONE;
     Square prevSq        = to_sq((ss-1)->currentMove);
 
     // Initialize statScore to zero for the grandchildren of the current position.
@@ -1097,6 +1099,10 @@ moves_loop: // When in check, search starts here
               // If the eval of ttMove is greater than beta, we reduce it (negative extension)
               else if (ttValue >= beta)
                   extension = -2;
+
+              // Track the move that caused a fail-high
+              if (value >= singularBeta)
+                  candidateMove = ss->currentMove;
           }
 
           // Check extensions (~1 Elo)
@@ -1166,6 +1172,10 @@ moves_loop: // When in check, search starts here
           // Increase reduction if ttMove is a capture (~3 Elo)
           if (ttCapture)
               r++;
+
+          // Less reduction for the move that caused a fail-high during excluded move search
+          if (move == candidateMove)
+              r--;
 
           // Decrease reduction at PvNodes if bestvalue
           // is vastly different from static evaluation
