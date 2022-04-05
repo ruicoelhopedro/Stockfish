@@ -1175,7 +1175,7 @@ moves_loop: // When in check, search starts here
 
           // Less reduction for the move that caused a fail-high during excluded move search
           if (move == candidateMove)
-              r--;
+              r -= 2;
 
           // Decrease reduction at PvNodes if bestvalue
           // is vastly different from static evaluation
