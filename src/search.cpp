@@ -1101,7 +1101,7 @@ moves_loop: // When in check, search starts here
                   extension = -2;
 
               // Track the move that caused a fail-high
-              else if (value > alpha)
+              else
                   candidateMove = ss->currentMove;
           }
 
