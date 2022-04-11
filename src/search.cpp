@@ -1174,7 +1174,7 @@ moves_loop: // When in check, search starts here
               r++;
 
           // Less reduction for the move that caused a fail-high during excluded move search
-          if (move == candidateMove)
+          if (PvNode && move == candidateMove)
               r--;
 
           // Decrease reduction at PvNodes if bestvalue
