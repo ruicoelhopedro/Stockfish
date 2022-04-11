@@ -1173,9 +1173,8 @@ moves_loop: // When in check, search starts here
           if (ttCapture)
               r++;
 
-          // Less reduction for the move that caused a fail-high during excluded move search
-          if (PvNode && move == candidateMove)
-              r--;
+          if (PvNode && candidateMove && move != candidateMove)
+              r++;
 
           // Decrease reduction at PvNodes if bestvalue
           // is vastly different from static evaluation
