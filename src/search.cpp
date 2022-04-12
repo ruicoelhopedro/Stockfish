@@ -304,6 +304,8 @@ void Thread::search() {
   multiPV = std::min(multiPV, rootMoves.size());
 
   complexityAverage.set(202, 1);
+  improvingAverage[ us].set(50, 1);
+  improvingAverage[~us].set(50, 1);
 
   trend         = SCORE_ZERO;
   optimism[ us] = Value(39);
@@ -358,7 +360,8 @@ void Thread::search() {
               trend = (us == WHITE ?  make_score(tr, tr / 2)
                                    : -make_score(tr, tr / 2));
 
-              int opt = sigmoid(prev, 8, 17, 144, 13966, 183);
+              int improvingDiff = improvingAverage[us].value() - improvingAverage[~us].value();
+              int opt = sigmoid(prev + improvingDiff, 8, 17, 144, 13966, 183);
               optimism[ us] = Value(opt);
               optimism[~us] = -optimism[us];
           }
@@ -773,6 +776,7 @@ namespace {
     complexity = abs(ss->staticEval - (us == WHITE ? eg_value(pos.psq_score()) : -eg_value(pos.psq_score())));
 
     thisThread->complexityAverage.update(complexity);
+    thisThread->improvingAverage[us].update(100 * improving);
 
     // Step 7. Razoring.
     // If eval is really low check with qsearch if it can exceed alpha, if it can't,
