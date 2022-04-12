@@ -361,7 +361,7 @@ void Thread::search() {
                                    : -make_score(tr, tr / 2));
 
               int improvingDiff = improvingAverage[us].value() - improvingAverage[~us].value();
-              int opt = sigmoid(prev + improvingDiff, 8, 17, 144, 13966, 183);
+              int opt = sigmoid(prev + improvingDiff / 2, 8, 17, 144, 13966, 183);
               optimism[ us] = Value(opt);
               optimism[~us] = -optimism[us];
           }
