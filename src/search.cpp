@@ -474,7 +474,7 @@ void Thread::search() {
           double complexPosition = std::clamp(1.0 + (complexity - 326) / 1618.1, 0.5, 1.5);
 
           int improvingDiff = improvingAverage[us].value() - improvingAverage[~us].value();
-          reduction *= std::clamp(1.0 - improvingDiff / 200.0, 0.8, 1.2);
+          reduction *= std::clamp(1.0 - improvingDiff / 100.0, 0.8, 1.2);
 
           double totalTime = Time.optimum() * fallingEval * reduction * bestMoveInstability * complexPosition;
 
