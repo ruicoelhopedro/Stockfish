@@ -1093,7 +1093,17 @@ moves_loop: // When in check, search starts here
               // that multiple moves fail high, and we can prune the whole subtree by returning
               // a soft bound.
               else if (singularBeta >= beta)
-                  return singularBeta;
+              {
+                  if (depth < 14)
+                    return singularBeta;
+
+                  ss->excludedMove = move;
+                  value = search<NonPV>(pos, ss, beta - 1, beta, depth - 4, cutNode);
+                  ss->excludedMove = MOVE_NONE;
+
+                  if (value > beta)
+                      return value;
+              }
 
               // If the eval of ttMove is greater than beta, we reduce it (negative extension)
               else if (ttValue >= beta)
