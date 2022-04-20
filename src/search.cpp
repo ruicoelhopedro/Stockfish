@@ -1116,6 +1116,7 @@ moves_loop: // When in check, search starts here
           // First move extensions at expected all-nodes
           else if (   !PvNode
                    && !cutNode
+                   && !ttMove
                    && depth > 9
                    && moveCount == 1
                    && (*contHist[0])[movedPiece][to_sq(move)] >= 29000)
