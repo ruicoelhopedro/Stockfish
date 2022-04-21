@@ -1112,6 +1112,15 @@ moves_loop: // When in check, search starts here
                    && move == ss->killers[0]
                    && (*contHist[0])[movedPiece][to_sq(move)] >= 5491)
               extension = 1;
+
+          // First move extensions at expected all-nodes
+          else if (   !PvNode
+                   && !cutNode
+                   && depth > 9
+                   && moveCount == 1
+                   && (  (*contHist[0])[movedPiece][to_sq(move)]
+                       + (*contHist[1])[movedPiece][to_sq(move)]) >= 45000)
+              extension = 1;
       }
 
       // Add extension to new depth
