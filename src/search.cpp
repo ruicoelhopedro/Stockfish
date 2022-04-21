@@ -1118,8 +1118,8 @@ moves_loop: // When in check, search starts here
                    && !cutNode
                    && depth > 9
                    && moveCount == 1
-                   && (  (*contHist[0])[movedPiece][to_sq(move)]
-                       + (*contHist[1])[movedPiece][to_sq(move)]) >= 45000)
+                   && ss->staticEval >= alpha
+                   && (*contHist[0])[movedPiece][to_sq(move)] >= 25000)
               extension = 1;
       }
 
