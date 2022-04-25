@@ -1085,6 +1085,8 @@ moves_loop: // When in check, search starts here
                       && value < singularBeta - 26
                       && ss->doubleExtensions <= 8)
                       extension = 2;
+
+                  update_continuation_histories(ss, movedPiece, to_sq(move), stat_bonus(depth - 1));
               }
 
               // Multi-cut pruning
