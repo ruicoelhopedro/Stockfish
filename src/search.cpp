@@ -1086,7 +1086,7 @@ moves_loop: // When in check, search starts here
                       && ss->doubleExtensions <= 8)
                       extension = 2;
 
-                  thisThread->mainHistory[us][from_to(move)] << stat_bonus(depth - 1);
+                  thisThread->mainHistory[us][from_to(move)] << stat_bonus(depth);
               }
 
               // Multi-cut pruning
