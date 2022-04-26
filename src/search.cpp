@@ -1122,7 +1122,7 @@ moves_loop: // When in check, search starts here
       // Add extension to new depth
       newDepth += extension;
       ss->doubleExtensions = (ss-1)->doubleExtensions + (extension == 2);
-      thisThread->extensionHistory[us][from_to(move)] << ((extension >= 1) ? 100 : -1);
+      thisThread->extensionHistory[us][from_to(move)] << ((extension >= 1) ? 50 : -1);
 
       // Speculative prefetch as early as possible
       prefetch(TT.first_entry(pos.key_after(move)));
