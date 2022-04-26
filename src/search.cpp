@@ -945,6 +945,7 @@ moves_loop: // When in check, search starts here
     MovePicker mp(pos, ttMove, depth, &thisThread->mainHistory,
                                       &captureHistory,
                                       contHist,
+                                      &thisThread->extensionHistory,
                                       countermove,
                                       ss->killers);
 
@@ -1121,6 +1122,7 @@ moves_loop: // When in check, search starts here
       // Add extension to new depth
       newDepth += extension;
       ss->doubleExtensions = (ss-1)->doubleExtensions + (extension == 2);
+      thisThread->extensionHistory[us][from_to(move)] << ((extension >= 1) ? 100 : -1);
 
       // Speculative prefetch as early as possible
       prefetch(TT.first_entry(pos.key_after(move)));
@@ -1491,6 +1493,7 @@ moves_loop: // When in check, search starts here
     MovePicker mp(pos, ttMove, depth, &thisThread->mainHistory,
                                       &thisThread->captureHistory,
                                       contHist,
+                                      &thisThread->extensionHistory,
                                       prevSq);
 
     int quietCheckEvasions = 0;
