@@ -304,6 +304,7 @@ void Thread::search() {
   multiPV = std::min(multiPV, rootMoves.size());
 
   complexityAverage.set(202, 1);
+  lowPlyExtensionAverage.set(0, 1);
 
   trend         = SCORE_ZERO;
   optimism[ us] = Value(39);
@@ -1116,6 +1117,9 @@ moves_loop: // When in check, search starts here
                    && move == ss->killers[0]
                    && (*contHist[0])[movedPiece][to_sq(move)] >= 5491)
               extension = 1;
+
+          if (ss->ply < 5 && moveCount == 1)
+              thisThread->lowPlyExtensionAverage.update(100 * extension);
       }
 
       // Add extension to new depth
@@ -1184,6 +1188,9 @@ moves_loop: // When in check, search starts here
 
           // Decrease/increase reduction for moves with a good/bad history (~30 Elo)
           r -= ss->statScore / 15914;
+
+          if (ss->ply < 5 && thisThread->lowPlyExtensionAverage.value() > 10)
+              r++;
 
           // In general we want to cap the LMR depth search at newDepth. But if reductions
           // are really negative and movecount is low, we allow this move to be searched
