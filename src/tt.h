@@ -83,6 +83,7 @@ class TranspositionTable {
 public:
  ~TranspositionTable() { aligned_large_pages_free(table); }
   void new_search() { generation8 += GENERATION_DELTA; } // Lower bits are used for other things
+  void new_depth(Depth d) { replacementDepth.store(std::max(1, 6 - d / 10)); }
   TTEntry* probe(const Key key, bool& found) const;
   int hashfull() const;
   void resize(size_t mbSize);
@@ -98,6 +99,7 @@ private:
   size_t clusterCount;
   Cluster* table;
   uint8_t generation8; // Size must be not bigger than TTEntry::genBound8
+  std::atomic_int replacementDepth;
 };
 
 extern TranspositionTable TT;
