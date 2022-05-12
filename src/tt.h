@@ -83,7 +83,7 @@ class TranspositionTable {
 public:
  ~TranspositionTable() { aligned_large_pages_free(table); }
   void new_search() { generation8 += GENERATION_DELTA; } // Lower bits are used for other things
-  void new_depth(Depth d) { replacementDepth.store(std::max(1, 6 - d / 10)); }
+  void new_depth(Depth d) { replacementDepth.store(std::max(1, 5 - d / 10), std::memory_order_relaxed); }
   TTEntry* probe(const Key key, bool& found) const;
   int hashfull() const;
   void resize(size_t mbSize);
