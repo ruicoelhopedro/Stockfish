@@ -1234,7 +1234,7 @@ moves_loop: // When in check, search starts here
               update_continuation_histories(ss, movedPiece, to_sq(move), bonus);
           }
       }
-      else if (deeper > 0 && value <= alpha - 20 * depth)
+      else if (deeper > 0 && value <= alpha - 15 * depth)
           update_continuation_histories(ss, movedPiece, to_sq(move), -stat_bonus(newDepth));
 
       // For PV nodes only, do a full PV search on the first move or after a fail
