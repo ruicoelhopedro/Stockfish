@@ -1138,6 +1138,7 @@ moves_loop: // When in check, search starts here
       // Step 16. Make the move
       pos.do_move(move, st, givesCheck);
 
+      int deeper = 0;
       bool doDeeperSearch = false;
 
       // Step 17. Late moves reduction / extension (LMR, ~98 Elo)
@@ -1195,11 +1196,11 @@ moves_loop: // When in check, search starts here
           // In general we want to cap the LMR depth search at newDepth. But if reductions
           // are really negative and movecount is low, we allow this move to be searched
           // deeper than the first move (this may lead to hidden double extensions).
-          int deeper =   r >= -1                   ? 0
-                       : moveCount <= 4            ? 2
-                       : PvNode && depth > 4       ? 1
-                       : cutNode && moveCount <= 8 ? 1
-                       :                             0;
+          deeper =   r >= -1                   ? 0
+                   : moveCount <= 4            ? 2
+                   : PvNode && depth > 4       ? 1
+                   : cutNode && moveCount <= 8 ? 1
+                   :                             0;
 
           Depth d = std::clamp(newDepth - r, 1, newDepth + deeper);
 
@@ -1233,6 +1234,8 @@ moves_loop: // When in check, search starts here
               update_continuation_histories(ss, movedPiece, to_sq(move), bonus);
           }
       }
+      else if (deeper > 0 && value <= alpha - 20 * depth)
+          update_continuation_histories(ss, movedPiece, to_sq(move), -stat_bonus(newDepth));
 
       // For PV nodes only, do a full PV search on the first move or after a fail
       // high (in the latter case search only if value < beta), otherwise let the
