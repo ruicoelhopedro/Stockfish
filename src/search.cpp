@@ -551,6 +551,7 @@ namespace {
     ASSERT_ALIGNED(&st, Eval::NNUE::CacheLineSize);
 
     TTEntry* tte;
+    Material::Entry* me;
     Key posKey;
     Move ttMove, move, excludedMove, bestMove;
     Depth extension, newDepth;
@@ -723,6 +724,7 @@ namespace {
     CapturePieceToHistory& captureHistory = thisThread->captureHistory;
 
     // Step 6. Static evaluation of the position
+    me = Material::probe(pos);
     if (ss->inCheck)
     {
         // Skip early pruning when in check
@@ -774,6 +776,7 @@ namespace {
 
     improving = improvement > 0;
     complexity = abs(ss->staticEval - (us == WHITE ? eg_value(pos.psq_score()) : -eg_value(pos.psq_score())));
+    complexity = complexity * me->game_phase() / PHASE_MIDGAME;
 
     thisThread->complexityAverage.update(complexity);
 
