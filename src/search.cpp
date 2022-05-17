@@ -776,7 +776,7 @@ namespace {
 
     improving = improvement > 0;
     complexity = abs(ss->staticEval - (us == WHITE ? eg_value(pos.psq_score()) : -eg_value(pos.psq_score())));
-    complexity = complexity * me->game_phase() / PHASE_MIDGAME;
+    complexity = complexity * (me->game_phase() + PHASE_MIDGAME) / (2 * PHASE_MIDGAME);
 
     thisThread->complexityAverage.update(complexity);
 
