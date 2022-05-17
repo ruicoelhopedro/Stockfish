@@ -1170,7 +1170,7 @@ moves_loop: // When in check, search starts here
           if (ttCapture)
               r++;
 
-          r += mg_value(thisThread->trend) * depth / 1000;
+          r += mg_value(thisThread->trend) * depth / 1250;
 
           // Decrease reduction at PvNodes if bestvalue
           // is vastly different from static evaluation
