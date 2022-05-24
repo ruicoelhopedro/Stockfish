@@ -1183,7 +1183,7 @@ moves_loop: // When in check, search starts here
           if ((ss+1)->cutoffCnt > 3 && !PvNode)
               r++;
 
-          if (PvNode && ss->ply == 1)
+          if (PvNode && ss->ply == 1 && !Threads.increaseDepth.load(std::memory_order_relaxed))
               r--;
 
           ss->statScore =  thisThread->mainHistory[us][from_to(move)]
