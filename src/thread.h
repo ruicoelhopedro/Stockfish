@@ -65,6 +65,7 @@ public:
   int selDepth, nmpMinPly;
   Color nmpColor;
   Value bestValue, optimism[COLOR_NB];
+  std::atomic<Move> currentBestMove;
 
   Position rootPos;
   StateInfo rootState;

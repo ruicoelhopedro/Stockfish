@@ -435,6 +435,7 @@ void Thread::search() {
       if (rootMoves[0].pv[0] != lastBestMove) {
          lastBestMove = rootMoves[0].pv[0];
          lastBestMoveDepth = rootDepth;
+         currentBestMove.store(rootMoves[0].pv[0], std::memory_order_relaxed);
       }
 
       // Have we found a "mate in x"?
@@ -472,6 +473,24 @@ void Thread::search() {
           double bestMoveInstability = 1 + 1.7 * totBestMoveChanges / Threads.size();
           int complexity = mainThread->complexityAverage.value();
           double complexPosition = std::clamp(1.0 + (complexity - 326) / 1618.1, 0.5, 1.5);
+
+          // Increase/reduce time based on the number of different moves from each thread
+          if (Threads.size() > 1 && Time.elapsed() > Time.optimum() / 2)
+          {
+              int uniqueMoves = 0;
+
+              // This can probably be done in a more efficient way
+              bool moveSeen[SQUARE_NB][SQUARE_NB];
+              std::memset(moveSeen, 0, sizeof(moveSeen));
+              for (Thread* th : Threads)
+              {
+                  Move m = th->currentBestMove.load(std::memory_order_relaxed);
+                  uniqueMoves += !moveSeen[from_sq(m)][to_sq(m)];
+                  moveSeen[from_sq(m)][to_sq(m)] = true;
+              }
+
+              reduction *= std::clamp(1.0 + (uniqueMoves - 2) / (4.0 + Threads.size() / 2), 0.5, 1.5);
+          }
 
           double totalTime = Time.optimum() * fallingEval * reduction * bestMoveInstability * complexPosition;
 
