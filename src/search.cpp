@@ -747,6 +747,8 @@ namespace {
         if (    ttValue != VALUE_NONE
             && (tte->bound() & (ttValue > eval ? BOUND_LOWER : BOUND_UPPER)))
             eval = ttValue;
+        else
+            eval = qsearch<NonPV>(pos, ss, eval - 1, eval);
     }
     else
     {
