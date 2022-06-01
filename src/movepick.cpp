@@ -61,9 +61,10 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
                                                              const CapturePieceToHistory* cph,
                                                              const PieceToHistory** ch,
                                                              Move cm,
-                                                             const Move* killers)
+                                                             const Move* killers,
+                                                             bool an)
            : pos(p), mainHistory(mh), captureHistory(cph), continuationHistory(ch),
-             ttMove(ttm), refutations{{killers[0], 0}, {killers[1], 0}, {cm, 0}}, depth(d)
+             ttMove(ttm), refutations{{killers[0], 0}, {killers[1], 0}, {cm, 0}}, depth(d), allNode(an)
 {
   assert(d > 0);
 
@@ -76,7 +77,7 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
                                                              const CapturePieceToHistory* cph,
                                                              const PieceToHistory** ch,
                                                              Square rs)
-           : pos(p), mainHistory(mh), captureHistory(cph), continuationHistory(ch), ttMove(ttm), recaptureSquare(rs), depth(d)
+           : pos(p), mainHistory(mh), captureHistory(cph), continuationHistory(ch), ttMove(ttm), recaptureSquare(rs), depth(d), allNode(false)
 {
   assert(d <= 0);
 
@@ -89,7 +90,7 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
 /// MovePicker constructor for ProbCut: we generate captures with SEE greater
 /// than or equal to the given threshold.
 MovePicker::MovePicker(const Position& p, Move ttm, Value th, Depth d, const CapturePieceToHistory* cph)
-           : pos(p), captureHistory(cph), ttMove(ttm), threshold(th), depth(d)
+           : pos(p), captureHistory(cph), ttMove(ttm), threshold(th), depth(d), allNode(false)
 {
   assert(!pos.checkers());
 
@@ -239,7 +240,7 @@ top:
           endMoves = generate<QUIETS>(pos, cur);
 
           score<QUIETS>();
-          partial_insertion_sort(cur, endMoves, -3000 * depth);
+          partial_insertion_sort(cur, endMoves, allNode ? 0 : -3000 * depth);
       }
 
       ++stage;
