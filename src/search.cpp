@@ -750,11 +750,13 @@ namespace {
     }
     else
     {
-        ss->staticEval = eval = evaluate(pos);
+        ss->staticEval = evaluate(pos);
 
         // Save static evaluation into transposition table
         if (!excludedMove)
-            tte->save(posKey, VALUE_NONE, ss->ttPv, BOUND_NONE, DEPTH_NONE, MOVE_NONE, eval);
+            tte->save(posKey, VALUE_NONE, ss->ttPv, BOUND_NONE, DEPTH_NONE, MOVE_NONE, ss->staticEval);
+
+        eval = qsearch<NonPV>(pos, ss, ss->staticEval - 1, ss->staticEval);
     }
 
     // Use static evaluation difference to improve quiet move ordering (~3 Elo)
