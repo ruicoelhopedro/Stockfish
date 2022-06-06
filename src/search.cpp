@@ -564,6 +564,7 @@ namespace {
     // Step 1. Initialize node
     Thread* thisThread = pos.this_thread();
     thisThread->depth  = depth;
+    ss->depth          = depth;
     ss->inCheck        = pos.checkers();
     priorCapture       = pos.captured_piece();
     Color us           = pos.side_to_move();
@@ -762,6 +763,12 @@ namespace {
     {
         int bonus = std::clamp(-16 * int((ss-1)->staticEval + ss->staticEval), -2000, 2000);
         thisThread->mainHistory[~us][from_to((ss-1)->currentMove)] << bonus;
+
+        // Extend tree after a large eval swing (if not previously extended)
+        if (   !PvNode
+            && (ss-1)->depth > depth
+            && abs(int((ss-1)->staticEval + ss->staticEval)) > 500)
+            depth++;
     }
 
     // Set up the improvement variable, which is the difference between the current
