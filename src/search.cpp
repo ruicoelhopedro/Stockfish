@@ -765,7 +765,7 @@ namespace {
         thisThread->mainHistory[~us][from_to((ss-1)->currentMove)] << bonus;
 
         // Extend tree after a large eval swing (if not previously extended)
-        if (   !PvNode
+        if (   PvNode
             && (ss-1)->depth > depth
             && abs(int((ss-1)->staticEval + ss->staticEval)) > 500)
             depth++;
