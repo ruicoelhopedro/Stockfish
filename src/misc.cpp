@@ -119,6 +119,8 @@ public:
         l.file.close();
     }
 
+    Threads.debugFileName = fname;
+
     if (!fname.empty())
     {
         l.file.open(fname, ifstream::out);
@@ -131,6 +133,13 @@ public:
 
         cin.rdbuf(&l.in);
         cout.rdbuf(&l.out);
+
+        for (Thread* th : Threads)
+        {
+            if (th->stream)
+                th->stream.close();
+            th->stream.open(fname + "-th" + std::to_string(th->id()));
+        }
     }
   }
 };

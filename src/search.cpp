@@ -398,6 +398,13 @@ void Thread::search() {
                   && Time.elapsed() > 3000)
                   sync_cout << UCI::pv(rootPos, rootDepth, alpha, beta) << sync_endl;
 
+              // Per thread update
+              if (   Threads.debugFileName != ""
+                  && multiPV == 1
+                  && (bestValue <= alpha || bestValue >= beta)
+                  && Time.elapsed() > 3000)
+                  stream << "<< " << UCI::pv(rootPos, rootDepth, alpha, beta) << std::endl;
+
               // In case of failing low/high increase aspiration window and
               // re-search, otherwise exit the loop.
               if (bestValue <= alpha)
@@ -428,6 +435,9 @@ void Thread::search() {
           if (    mainThread
               && (Threads.stop || pvIdx + 1 == multiPV || Time.elapsed() > 3000))
               sync_cout << UCI::pv(rootPos, rootDepth, alpha, beta) << sync_endl;
+          if (    Threads.debugFileName != ""
+              && (Threads.stop || pvIdx + 1 == multiPV || Time.elapsed() > 3000))
+              stream << "<< " << UCI::pv(rootPos, rootDepth, alpha, beta) << " increaseDepth " << Threads.increaseDepth << std::endl;
       }
 
       if (!Threads.stop)
@@ -988,6 +998,11 @@ moves_loop: // When in check, search starts here
           sync_cout << "info depth " << depth
                     << " currmove " << UCI::move(move, pos.is_chess960())
                     << " currmovenumber " << moveCount + thisThread->pvIdx << sync_endl;
+
+      if (rootNode && Threads.debugFileName != "" && Time.elapsed() > 3000)
+          thisThread->stream << "<< info depth " << depth
+                             << " currmove " << UCI::move(move, pos.is_chess960())
+                             << " currmovenumber " << moveCount + thisThread->pvIdx << std::endl;
       if (PvNode)
           (ss+1)->pv = nullptr;
 

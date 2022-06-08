@@ -150,6 +150,15 @@ void ThreadPool::set(size_t requested) {
       // Init thread number dependent search params.
       Search::init();
   }
+
+  // Update debug output files
+  if (debugFileName != "")
+      for (Thread* th : *this)
+      {
+          if (th->stream)
+              th->stream.close();
+          th->stream.open(debugFileName + "-th" + std::to_string(th->id()));
+      }
 }
 
 

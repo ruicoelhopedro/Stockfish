@@ -245,6 +245,10 @@ void UCI::loop(int argc, char* argv[]) {
 
       istringstream is(cmd);
 
+      if (Threads.debugFileName != "")
+          for (Thread* th : Threads)
+              th->stream << ">> " << cmd << std::endl;
+
       token.clear(); // Avoid a stale if getline() returns nothing or a blank line
       is >> skipws >> token;
 

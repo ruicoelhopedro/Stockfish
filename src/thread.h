@@ -24,6 +24,7 @@
 #include <mutex>
 #include <thread>
 #include <vector>
+#include <fstream>
 
 #include "material.h"
 #include "movepick.h"
@@ -76,6 +77,8 @@ public:
   CapturePieceToHistory captureHistory;
   ContinuationHistory continuationHistory[2][2];
   Score trend;
+
+  std::ofstream stream;
 };
 
 
@@ -116,6 +119,8 @@ struct ThreadPool : public std::vector<Thread*> {
   void wait_for_search_finished() const;
 
   std::atomic_bool stop, increaseDepth;
+
+  std::string debugFileName;
 
 private:
   StateListPtr setupStates;
