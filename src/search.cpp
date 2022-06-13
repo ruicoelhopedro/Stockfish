@@ -1076,6 +1076,7 @@ moves_loop: // When in check, search starts here
               Depth singularDepth = (depth - 1) / 2;
 
               ss->excludedMove = move;
+              ss->currentMove = MOVE_NONE;
               value = search<NonPV>(pos, ss, singularBeta - 1, singularBeta, singularDepth, cutNode);
               ss->excludedMove = MOVE_NONE;
 
@@ -1089,6 +1090,9 @@ moves_loop: // When in check, search starts here
                       && ss->doubleExtensions <= 8)
                       extension = 2;
               }
+
+              else if (ttCapture && is_ok(ss->currentMove) && pos.capture(ss->currentMove))
+                  extension = 1;
 
               // Multi-cut pruning
               // Our ttMove is assumed to fail high, and now we failed high also on a reduced
