@@ -1122,7 +1122,7 @@ moves_loop: // When in check, search starts here
 
           else if (   rootNode
                    && move == ttMove
-                   && thisThread->searchAgainCounter > 3)
+                   && thisThread->searchAgainCounter > 5)
               extension = 1;
       }
 
