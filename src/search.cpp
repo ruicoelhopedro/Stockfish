@@ -313,7 +313,7 @@ void Thread::search() {
   optimism[ us] = Value(39);
   optimism[~us] = -optimism[us];
 
-  int searchAgainCounter = 0;
+  searchAgainCounter = 0;
 
   // Iterative deepening loop until requested to stop or the target depth is reached
   while (   ++rootDepth < MAX_PLY
@@ -1118,6 +1118,11 @@ moves_loop: // When in check, search starts here
                    && move == ttMove
                    && move == ss->killers[0]
                    && (*contHist[0])[movedPiece][to_sq(move)] >= 5491)
+              extension = 1;
+
+          else if (   rootNode
+                   && move == ttMove
+                   && thisThread->searchAgainCounter > 3)
               extension = 1;
       }
 
