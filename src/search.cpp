@@ -1116,7 +1116,7 @@ moves_loop: // When in check, search starts here
 
           else if (   rootNode
                    && move == ttMove)
-              extension = thisThread->searchAgainCounter / 3;
+              extension = thisThread->searchAgainCounter / 4;
       }
 
       // Add extension to new depth
