@@ -1077,6 +1077,8 @@ moves_loop: // When in check, search starts here
               {
                   extension = 1;
 
+                  thisThread->mainHistory[us][from_to(move)] << stat_bonus(singularDepth);
+
                   // Avoid search explosion by limiting the number of double extensions
                   if (  !PvNode
                       && value < singularBeta - 26
