@@ -1074,11 +1074,15 @@ moves_loop: // When in check, search starts here
               {
                   extension = 1;
 
-                  // Avoid search explosion by limiting the number of double extensions
-                  if (  !PvNode
-                      && value < singularBeta - 26
-                      && ss->doubleExtensions <= 8)
-                      extension = 2;
+                  if (value < singularBeta - 26)
+                  {
+                      update_continuation_histories(ss, movedPiece, to_sq(move), stat_bonus(singularDepth));
+
+                      // Avoid search explosion by limiting the number of double extensions
+                      if (  !PvNode
+                          && ss->doubleExtensions <= 8)
+                          extension = 2;
+                  }
               }
 
               // Multi-cut pruning
