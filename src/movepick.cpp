@@ -20,6 +20,7 @@
 
 #include "bitboard.h"
 #include "movepick.h"
+#include "thread.h"
 
 namespace Stockfish {
 
@@ -239,7 +240,7 @@ top:
           endMoves = generate<QUIETS>(pos, cur);
 
           score<QUIETS>();
-          partial_insertion_sort(cur, endMoves, -3000 * depth);
+          partial_insertion_sort(cur, endMoves, -3000 * (depth + pos.this_thread()->id() % 2));
       }
 
       ++stage;
