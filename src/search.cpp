@@ -329,6 +329,7 @@ void Thread::search() {
       for (RootMove& rm : rootMoves)
           rm.previousScore = rm.score;
 
+      Depth adjustedDepth;
       size_t pvFirst = 0;
       pvLast = 0;
 
@@ -373,7 +374,7 @@ void Thread::search() {
           int failedHighCnt = 0;
           while (true)
           {
-              Depth adjustedDepth = std::max(1, rootDepth - failedHighCnt - searchAgainCounter);
+              adjustedDepth = std::max(1, rootDepth - failedHighCnt - searchAgainCounter);
               bestValue = Stockfish::search<Root>(rootPos, ss, alpha, beta, adjustedDepth, false);
 
               // Bring the best move to the front. It is critical that sorting
@@ -403,7 +404,10 @@ void Thread::search() {
                   && multiPV == 1
                   && (bestValue <= alpha || bestValue >= beta)
                   && Time.elapsed() > 3000)
-                  stream << "<< " << UCI::pv(rootPos, rootDepth, alpha, beta) << std::endl;
+                  stream << "<< " << UCI::pv(rootPos, rootDepth, alpha, beta)
+                         << " increaseDepth " << Threads.increaseDepth
+                         << " adjustedDepth " << adjustedDepth 
+                         << std::endl;
 
               // In case of failing low/high increase aspiration window and
               // re-search, otherwise exit the loop.
@@ -437,7 +441,10 @@ void Thread::search() {
               sync_cout << UCI::pv(rootPos, rootDepth, alpha, beta) << sync_endl;
           if (    Threads.debugFileName != ""
               && (Threads.stop || pvIdx + 1 == multiPV || Time.elapsed() > 3000))
-              stream << "<< " << UCI::pv(rootPos, rootDepth, alpha, beta) << " increaseDepth " << Threads.increaseDepth << std::endl;
+              stream << "<< " << UCI::pv(rootPos, rootDepth, alpha, beta)
+                     << " increaseDepth " << Threads.increaseDepth
+                     << " adjustedDepth " << adjustedDepth 
+                     << std::endl;
       }
 
       if (!Threads.stop)
