@@ -1513,6 +1513,9 @@ moves_loop: // When in check, search starts here
 
       moveCount++;
 
+      if (PvNode)
+          (ss+1)->pv = nullptr;
+
       // Futility pruning and moveCount pruning (~5 Elo)
       if (    bestValue > VALUE_TB_LOSS_IN_MAX_PLY
           && !givesCheck
@@ -1571,7 +1574,16 @@ moves_loop: // When in check, search starts here
 
       // Make and search the move
       pos.do_move(move, st, givesCheck);
-      value = -qsearch<nodeType>(pos, ss+1, -beta, -alpha, depth - 1);
+      value = -qsearch<NonPV>(pos, ss+1, -(alpha+1), -alpha, depth - 1);
+
+      if (PvNode && (value > alpha && value < beta))
+      {
+          (ss+1)->pv = pv;
+          (ss+1)->pv[0] = MOVE_NONE;
+
+          value = -qsearch<PV>(pos, ss+1, -beta, -alpha, depth - 1);
+      }
+
       pos.undo_move(move);
 
       assert(value > -VALUE_INFINITE && value < VALUE_INFINITE);
