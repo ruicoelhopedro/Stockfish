@@ -1497,6 +1497,7 @@ moves_loop: // When in check, search starts here
                                       contHist,
                                       prevSq);
 
+    int searchedMoves = 0;
     int quietCheckEvasions = 0;
 
     // Loop through the moves until no moves remain or a beta cutoff occurs
@@ -1570,13 +1571,16 @@ moves_loop: // When in check, search starts here
           && ss->inCheck)
           continue;
 
+      searchedMoves++;
       quietCheckEvasions += !capture && ss->inCheck;
 
       // Make and search the move
       pos.do_move(move, st, givesCheck);
-      value = -qsearch<NonPV>(pos, ss+1, -(alpha+1), -alpha, depth - 1);
 
-      if (PvNode && (value > alpha && value < beta))
+      if (!PvNode || searchedMoves > 1)
+          value = -qsearch<NonPV>(pos, ss+1, -(alpha+1), -alpha, depth - 1);
+
+      if (PvNode && (searchedMoves == 1 || (value > alpha && value < beta)))
       {
           (ss+1)->pv = pv;
           (ss+1)->pv[0] = MOVE_NONE;
