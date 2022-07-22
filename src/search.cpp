@@ -954,6 +954,11 @@ moves_loop: // When in check, search starts here
                          && (tte->bound() & BOUND_UPPER)
                          && tte->depth() >= depth;
 
+    bool likelyRaiseAlpha =    PvNode
+                            && ttValue > alpha
+                            && (tte->bound() & BOUND_LOWER)
+                            && tte->depth() >= depth;
+
     // Step 13. Loop through all pseudo-legal moves until no moves remain
     // or a beta cutoff occurs.
     while ((move = mp.next_move(moveCountPruning)) != MOVE_NONE)
@@ -1169,6 +1174,9 @@ moves_loop: // When in check, search starts here
 
           // Increase reduction if next ply has a lot of fail high else reset count to 0
           if ((ss+1)->cutoffCnt > 3 && !PvNode)
+              r++;
+
+          if (likelyRaiseAlpha)
               r++;
 
           ss->statScore =  thisThread->mainHistory[us][from_to(move)]
