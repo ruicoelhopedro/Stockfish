@@ -75,7 +75,7 @@ namespace {
   }
 
   constexpr int futility_move_count(int improvement, Depth depth) {
-    return 100 * (3 + depth * depth) / std::clamp(2 * improvement + 50, 50, 200);
+    return 100 * (3 + depth * depth) / std::clamp(improvement + 100, 100, 200);
   }
 
   // History and stats update bonus, based on depth
