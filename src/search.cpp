@@ -723,9 +723,9 @@ namespace {
     CapturePieceToHistory& captureHistory = thisThread->captureHistory;
 
     // Step 6. Static evaluation of the position
-    if (ss->inCheck)
+    if (ss->inCheck || excludedMove)
     {
-        // Skip early pruning when in check
+        // Skip early pruning when in check or during singular searches
         ss->staticEval = eval = VALUE_NONE;
         improving = false;
         improvement = 0;
