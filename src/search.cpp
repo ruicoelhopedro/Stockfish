@@ -1183,7 +1183,7 @@ moves_loop: // When in check, search starts here
           // beyond the first move depth. This may lead to hidden double extensions.
           Depth d = std::min(newDepth - r, newDepth + 1);
 
-          if (d <= 0)
+          if (d <= 0 && r < 4)
               value = -qsearch<NonPV>(pos, ss+1, -(alpha+1), -alpha);
           else
               value = -search<NonPV>(pos, ss+1, -(alpha+1), -alpha, std::max(d, 1), true);
