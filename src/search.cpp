@@ -745,7 +745,7 @@ namespace {
             && (tte->bound() & (ttValue > eval ? BOUND_LOWER : BOUND_UPPER)))
         {
             eval = ttValue;
-            complexity += abs(eval - ss->staticEval);
+            complexity += abs(eval - ss->staticEval) / 2;
         }
     }
     else
