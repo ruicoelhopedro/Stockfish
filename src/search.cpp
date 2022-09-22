@@ -743,7 +743,10 @@ namespace {
         // ttValue can be used as a better position evaluation (~4 Elo)
         if (    ttValue != VALUE_NONE
             && (tte->bound() & (ttValue > eval ? BOUND_LOWER : BOUND_UPPER)))
+        {
             eval = ttValue;
+            complexity += abs(eval - ss->staticEval);
+        }
     }
     else
     {
