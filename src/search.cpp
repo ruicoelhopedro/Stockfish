@@ -1455,8 +1455,8 @@ moves_loop: // When in check, search starts here
             (ss-1)->currentMove != MOVE_NULL ? evaluate(pos)
                                              : -(ss-1)->staticEval;
 
-        // Stand pat. Return immediately if static value is at least beta
-        if (bestValue >= beta)
+        // Stand pat. Return immediately if static value raises alpha
+        if (bestValue > alpha)
         {
             // Save gathered info in transposition table
             if (!ss->ttHit)
