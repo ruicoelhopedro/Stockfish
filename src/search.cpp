@@ -754,7 +754,7 @@ namespace {
             tte->save(posKey, VALUE_NONE, ss->ttPv, BOUND_NONE, DEPTH_NONE, MOVE_NONE, eval);
 
         if (depth > 10)
-            eval = qsearch<NonPV>(pos, ss, beta - 1, beta);
+            eval = qsearch<NonPV>(pos, ss, eval - 1, eval);
     }
 
     thisThread->complexityAverage.update(complexity);
