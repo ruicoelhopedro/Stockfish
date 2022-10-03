@@ -753,7 +753,7 @@ namespace {
         if (!excludedMove)
             tte->save(posKey, VALUE_NONE, ss->ttPv, BOUND_NONE, DEPTH_NONE, MOVE_NONE, eval);
 
-        if (depth > 10)
+        if (depth > 8)
             eval = qsearch<NonPV>(pos, ss, eval - 1, eval);
     }
 
