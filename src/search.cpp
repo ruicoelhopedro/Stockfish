@@ -1168,6 +1168,9 @@ moves_loop: // When in check, search starts here
           if ((ss+1)->cutoffCnt > 3)
               r++;
 
+          // More reductions as we approach the time limit
+          r += Threads.timeFactor.load(std::memory_order_relaxed) / 25;
+
           ss->statScore =  2 * thisThread->mainHistory[us][from_to(move)]
                          + (*contHist[0])[movedPiece][to_sq(move)]
                          + (*contHist[1])[movedPiece][to_sq(move)]
@@ -1816,6 +1819,9 @@ void MainThread::check_time() {
       lastInfoTime = tick;
       dbg_print();
   }
+
+  if (Limits.use_time_management())
+      Threads.timeFactor = 100 * elapsed / Time.maximum();
 
   // We should not stop pondering until told so by the GUI
   if (ponder)
