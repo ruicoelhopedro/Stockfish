@@ -1308,7 +1308,7 @@ moves_loop: // When in check, search starts here
           if (value > alpha)
           {
               bestMove = move;
-              bestMoveDepth = depth + extension;
+              bestMoveDepth = newDepth + 1;
 
               if (PvNode && !rootNode) // Update pv even in fail-high case
                   update_pv(ss->pv, move, (ss+1)->pv);
