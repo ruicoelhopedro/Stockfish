@@ -281,6 +281,7 @@ void Thread::search() {
   {
       (ss-i)->continuationHistory = &this->continuationHistory[0][0][NO_PIECE][0]; // Use as a sentinel
       (ss-i)->staticEval = VALUE_NONE;
+      (ss-i)->eval = VALUE_NONE;
   }
 
   for (int i = 0; i <= MAX_PLY + 2; ++i)
@@ -706,7 +707,7 @@ namespace {
     if (ss->inCheck)
     {
         // Skip early pruning when in check
-        ss->staticEval = eval = VALUE_NONE;
+        ss->staticEval = eval = ss->eval = VALUE_NONE;
         improving = false;
         improvement = 0;
         goto moves_loop;
@@ -737,6 +738,7 @@ namespace {
         // Save static evaluation into transposition table
         tte->save(posKey, VALUE_NONE, ss->ttPv, BOUND_NONE, DEPTH_NONE, MOVE_NONE, eval);
     }
+    ss->eval = eval;
 
     // Use static evaluation difference to improve quiet move ordering (~4 Elo)
     if (is_ok((ss-1)->currentMove) && !(ss-1)->inCheck && !priorCapture)
@@ -749,9 +751,9 @@ namespace {
     // static evaluation and the previous static evaluation at our turn (if we were
     // in check at our previous move we look at the move prior to it). The improvement
     // margin and the improving flag are used in various pruning heuristics.
-    improvement =   (ss-2)->staticEval != VALUE_NONE ? ss->staticEval - (ss-2)->staticEval
-                  : (ss-4)->staticEval != VALUE_NONE ? ss->staticEval - (ss-4)->staticEval
-                  :                                    163;
+    improvement =   (ss-2)->eval != VALUE_NONE ? ss->eval - (ss-2)->eval
+                  : (ss-4)->eval != VALUE_NONE ? ss->eval - (ss-4)->eval
+                  :                              163;
     improving = improvement > 0;
 
     // Step 7. Razoring (~1 Elo).
